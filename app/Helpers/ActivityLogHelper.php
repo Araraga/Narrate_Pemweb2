@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Helpers;
-
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,24 +16,24 @@ function activity_log(string $action, string $description, ?Request $request = n
 {
     try {
         $userId = Auth::id();
-
+        
         if (!$userId) {
             return;
         }
-
+        
         $log = new ActivityLog();
         $log->user_id = $userId;
         $log->action = $action;
         $log->description = $description;
-
+        
         if ($request) {
-            $logf->ip_address = $request->ip();
+            $log->ip_address = $request->ip();
             $log->user_agent = $request->userAgent();
         }
-
+        
         $log->save();
     } catch (\Exception $e) {
-        // Mencatat kesalahan ke log Laravel
-        \Illuminate\Support\Facades\Log::error('Gagal membuat log aktivitas: ' . $e->getMessage());
+        // Log the error to Laravel's log
+        \Illuminate\Support\Facades\Log::error('Failed to create activity log: ' . $e->getMessage());
     }
 }

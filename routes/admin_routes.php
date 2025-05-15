@@ -45,18 +45,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/articles/{article}/reject', [ArticleController::class, 'reject'])->name('articles.reject');
 
     // Categories
-    Route::get('/categories', CategoryController::class);
+    Route::resource('categories', CategoryController::class);
 
     // Tags
-    Route::get('tags', TagController::class);
+    Route::resource('tags', TagController::class);
 
     // Comments
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::get('/comments/pending', [CommentController::class, 'pending'])->name('comments.pending');
-    Route::get('/comments/{comment}/approve', [CommentController::class, 'approve'])->name('comments.approve');
-    Route::get('/comments/{comment}/reject', [CommentController::class, 'reject'])->name('comments.reject');
-    Route::get('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::put('/comments/{comment}/approve', [CommentController::class, 'approve'])->name('comments.approve');
+    Route::put('/comments/{comment}/reject', [CommentController::class, 'reject'])->name('comments.reject');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
     // Userds
-    Route::get('users', UserController::class);
+    Route::resource('users', UserController::class);
 });

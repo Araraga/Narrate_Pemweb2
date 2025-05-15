@@ -1,23 +1,22 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Admin Dashboard')
-
-@section('content')
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Dashboard Admin</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-
-    {{-- Summary Stats --}}
+<div>
+    <!-- Timeframe Selector -->
+    <div class="d-flex justify-content-end mb-4">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn {{ $timeframe == '7' ? 'btn-primary' : 'btn-outline-primary' }}" wire:click="$set('timeframe', '7')">Last 7 Days</button>
+            <button type="button" class="btn {{ $timeframe == '30' ? 'btn-primary' : 'btn-outline-primary' }}" wire:click="$set('timeframe', '30')">Last 30 Days</button>
+            <button type="button" class="btn {{ $timeframe == '90' ? 'btn-primary' : 'btn-outline-primary' }}" wire:click="$set('timeframe', '90')">Last 90 Days</button>
+        </div>
+    </div>
+    
+    <!-- Summary Stats -->
     <div class="row">
         <div class="col-xl-3 col-md-6">
             <div class="card bg-primary text-white mb-4">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fs-5 fw-bold">{{ number_format($totalArticles) }}</div>
-                            <div>Total Artikel</div>
+                            <div class="fs-5 fw-bold">{{ number_format($statsData['totalArticles']) }}</div>
+                            <div>Total Articles</div>
                         </div>
                         <div class="fs-1">
                             <i class="bi bi-file-earmark-text"></i>
@@ -25,7 +24,45 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a  class="small text-white stretched-link" href="{{ route('admin.user.index') }}">View Details</a>
+                    <a class="small text-white stretched-link" href="{{ route('admin.articles.index') }}">View Details</a>
+                    <div class="small text-white"><i class="bi bi-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-5 fw-bold">{{ number_format($statsData['pendingModeration']) }}</div>
+                            <div>Pending Moderation</div>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{{ route('admin.articles.moderation') }}">View Details</a>
+                    <div class="small text-white"><i class="bi bi-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-5 fw-bold">{{ number_format($statsData['totalUsers']) }}</div>
+                            <div>Total Users</div>
+                        </div>
+                        <div class="fs-1">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{{ route('admin.users.index') }}">View Details</a>
                     <div class="small text-white"><i class="bi bi-arrow-right"></i></div>
                 </div>
             </div>
@@ -35,8 +72,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fs-5 fw-bold">{{ number_format($totalViews) }}</div>
-                            <div>Total Artikel Views</div>
+                            <div class="fs-5 fw-bold">{{ number_format($statsData['totalViews']) }}</div>
+                            <div>Total Article Views</div>
                         </div>
                         <div class="fs-1">
                             <i class="bi bi-eye"></i>
@@ -44,20 +81,25 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{{ route('admin.article.analytics') }}" >View Details</a>
+                    <a class="small text-white stretched-link" href="{{ route('admin.article.analytics') }}">View Details</a>
                     <div class="small text-white"><i class="bi bi-arrow-right"></i></div>
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- Charts Row --}}
+    
+    <!-- Charts Row -->
     <div class="row">
         <div class="col-xl-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="bi bi-bar-chart-line me-1"></i>
-                    Articles Published Last 30 Days
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-bar-chart-line me-1"></i>
+                        Articles Published
+                    </div>
+                    <div class="text-muted small">
+                        Last {{ $timeframe }} days
+                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="articlesChart" width="100%" height="40"></canvas>
@@ -66,9 +108,14 @@
         </div>
         <div class="col-xl-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="bi bi-bar-chart-line me-1"></i>
-                    New Users Last 30 Days
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-bar-chart-line me-1"></i>
+                        New User Registrations
+                    </div>
+                    <div class="text-muted small">
+                        Last {{ $timeframe }} days
+                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="usersChart" width="100%" height="40"></canvas>
@@ -76,8 +123,28 @@
             </div>
         </div>
     </div>
-
-    {{-- Articles Moderation and Top Articles --}}
+    
+    <!-- Views Chart -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-graph-up me-1"></i>
+                        Article Views Trend
+                    </div>
+                    <div class="text-muted small">
+                        Last {{ $timeframe }} days
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="viewsChart" width="100%" height="40"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Articles Moderation and Top Articles -->
     <div class="row">
         <div class="col-lg-6">
             <div class="card mb-4">
@@ -169,8 +236,8 @@
             </div>
         </div>
     </div>
-
-    {{-- Categories and Recent Comments --}}
+    
+    <!-- Categories and Recent Comments -->
     <div class="row">
         <div class="col-lg-6">
             <div class="card mb-4">
@@ -247,95 +314,148 @@
             </div>
         </div>
     </div>
+    
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Define charts
+        let articlesChart = null;
+        let usersChart = null;
+        let viewsChart = null;
+        
+        // Create or update charts when data changes
+        document.addEventListener('livewire:initialized', () => {
+            createOrUpdateCharts(@json($chartData));
+            
+            @this.on('chartDataUpdated', (data) => {
+                createOrUpdateCharts(data);
+            });
+        });
+        
+        function createOrUpdateCharts(chartData) {
+            const dates = chartData.dates.map(date => {
+                const d = new Date(date);
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            
+            // Articles Chart
+            const articlesCtx = document.getElementById('articlesChart');
+            if (articlesChart) {
+                articlesChart.data.labels = dates;
+                articlesChart.data.datasets[0].data = chartData.articles;
+                articlesChart.update();
+            } else {
+                articlesChart = new Chart(articlesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Articles Published',
+                            data: chartData.articles,
+                            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            // Users Chart
+            const usersCtx = document.getElementById('usersChart');
+            if (usersChart) {
+                usersChart.data.labels = dates;
+                usersChart.data.datasets[0].data = chartData.users;
+                usersChart.update();
+            } else {
+                usersChart = new Chart(usersCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'New Users',
+                            data: chartData.users,
+                            backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            borderWidth: 2,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Views Chart
+            const viewsCtx = document.getElementById('viewsChart');
+            if (viewsChart) {
+                viewsChart.data.labels = dates;
+                viewsChart.data.datasets[0].data = chartData.views;
+                viewsChart.update();
+            } else {
+                viewsChart = new Chart(viewsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Article Views',
+                            data: chartData.views,
+                            fill: true,
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            borderColor: 'rgba(220, 53, 69, 1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            pointRadius: 3,
+                            pointBackgroundColor: 'rgba(220, 53, 69, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    @endpush
 </div>
-@endsection
-
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-<script>
-    const articlesData = @json($articlesPerDay);
-    const usersData = @json($registrationsPerDay);
-    
-    // Data 30 hari terakhir
-    const getDates = () => {
-        const dates = [];
-        for (let i = 30; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            const formattedDate = date.toISOString().split('T')[0];
-            dates.push(formattedDate);
-        }
-        return dates;
-    };
-    
-    const dates = getDates();
-    
-    // chart data
-    const prepareChartData = (sourceData) => {
-        return dates.map(date => sourceData[date] || 0);
-    };
-    
-    // membuat artikel chart
-    const articlesCtx = document.getElementById('articlesChart');
-    new Chart(articlesCtx, {
-        type: 'bar',
-        data: {
-            labels: dates.map(date => {
-                const d = new Date(date);
-                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }),
-            datasets: [{
-                label: 'Articles Published',
-                data: prepareChartData(articlesData),
-                backgroundColor: 'rgba(0, 123, 255, 0.5)',
-                borderColor: 'rgba(0, 123, 255, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-    
-    // membuat user chart
-    const usersCtx = document.getElementById('usersChart');
-    new Chart(usersCtx, {
-        type: 'line',
-        data: {
-            labels: dates.map(date => {
-                const d = new Date(date);
-                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }),
-            datasets: [{
-                label: 'New Users',
-                data: prepareChartData(usersData),
-                backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 2,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-</script>
-@endsection 

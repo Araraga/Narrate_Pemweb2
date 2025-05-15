@@ -16,6 +16,11 @@ class DashboardAnalytics extends Component
     public $chartData = [];
     public $statsData = [];
 
+    public $topArticles = [];
+    public $latestPendingArticles = [];
+    public $recentComments = [];
+    public $topCategories = [];
+
     protected $listeners = [
         'refresh' => '$refresh'
     ];

@@ -187,7 +187,6 @@
             }
         }
         
-        /* Custom card styles */
         .card {
             box-shadow: 0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15);
             border: none;
@@ -199,12 +198,10 @@
             font-weight: 600;
         }
         
-        /* Custom table styles */
         .table > :not(caption) > * > * {
             padding: 0.75rem;
         }
         
-        /* Custom button styles */
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -218,8 +215,7 @@
         .bg-primary {
             background-color: var(--primary-color) !important;
         }
-        
-        /* Page loader */
+
         #page-loader {
             position: fixed;
             top: 0;
@@ -233,7 +229,6 @@
             align-items: center;
         }
         
-        /* Notification badges */
         .notification-badge {
             position: absolute;
             top: 0.25rem;
@@ -479,13 +474,11 @@
             document.getElementById('sidebar-wrapper').classList.toggle('active');
         });
         
-        // Initialize DataTables
         $(document).ready(function() {
             $('.datatable').DataTable({
                 responsive: true
             });
             
-            // Auto-dismiss alerts
             setTimeout(function() {
                 $('.alert-dismissible').alert('close');
             }, 5000);

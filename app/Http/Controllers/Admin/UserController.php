@@ -59,7 +59,6 @@ class UserController extends Controller
 
         $user->save();
 
-        // Log the user creation
         activity_log('user_create', 'Created user: ' . $user->name, $request);
 
         return redirect()->route('admin.users.index')
@@ -141,7 +140,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Prevent deleting yourself
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot delete your own account.');
         }

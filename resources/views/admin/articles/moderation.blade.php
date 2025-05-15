@@ -227,9 +227,8 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Initialize DataTable with custom options
         $('.datatable').DataTable({
-            order: [[4, 'desc']], // Sort by submission date (descending)
+            order: [[4, 'desc']], 
             pageLength: 10,
             language: {
                 search: "Search articles:",

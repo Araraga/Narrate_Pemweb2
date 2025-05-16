@@ -37,7 +37,7 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        if (Auth::attempt($crredentials, $request->boolean('remember'))) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             activity_log('login', 'Admin berhasil masuk.', $request);
@@ -61,7 +61,7 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-        $requesy->session()->regenerateToken();
+        $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');
     }
@@ -72,7 +72,7 @@ class AuthController extends Controller
 
     public function showProfile()
     {
-        return view('admin,profile', [
+        return view('admin.profile', [
             'user' => Auth::user(),
         ]);
     }
@@ -85,8 +85,8 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => ['required', 'string', 'mac:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:user,email,' . $user->id],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'bio' => ['nullable', 'string', 'max:1000'],
             'profile_picture' => ['nullable', 'image', 'max:2048'],
         ]);
@@ -99,6 +99,7 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->bio = $request->bio;
+        
         $user->save();
 
         activity_log('profile_update', 'Admin memperbarui informasi profil.', $request);

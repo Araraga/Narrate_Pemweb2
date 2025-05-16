@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/article-analytics', [AdminController::class, 'articleAnalytics'])->name('article.analytics');
     Route::get('/activity-logs', [AdminController::class, 'activityLogs'])->name('activity.logs');
     Route::get('/error-logs', [AdminController::class, 'errorLogs'])->name('error.logs');

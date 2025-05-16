@@ -99,7 +99,7 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->bio = $request->bio;
-        
+
         $user->save();
 
         activity_log('profile_update', 'Admin memperbarui informasi profil.', $request);
@@ -125,7 +125,7 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $user->password = Hash::make($request->password);
         $user->save();
 

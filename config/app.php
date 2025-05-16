@@ -54,6 +54,23 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'providers' => [
+        // Laravel Framework Service Providers...
+        Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
+        // ... lainnya
+
+        // Application Service Providers...
+        App\Providers\AppServiceProvider::class,
+        // App\Providers\AuthServiceProvider::class,
+        // App\Providers\EventServiceProvider::class,
+        // App\Providers\RouteServiceProvider::class,
+
+        // Tambahkan HelperServiceProvider di sini
+        App\Providers\HelperServiceProvider::class,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
